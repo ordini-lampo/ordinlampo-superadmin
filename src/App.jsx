@@ -217,7 +217,13 @@ export default function SuperAdminPanel() {
         phone_landline_label: editingRestaurant.phone_landline_label || 'Fisso Locale',
         show_phone_landline: editingRestaurant.show_phone_landline || false,
         website: editingRestaurant.website || null, show_website: editingRestaurant.show_website || false,
-        wechat_id: editingRestaurant.wechat_id || null, show_wechat: editingRestaurant.show_wechat || false
+        wechat_id: editingRestaurant.wechat_id || null, show_wechat: editingRestaurant.show_wechat || false,
+        allow_delivery_fee_edit: editingRestaurant.allow_delivery_fee_edit ?? true,
+        allow_rider_compensation_display: editingRestaurant.allow_rider_compensation_display ?? true,
+        force_rider_compensation: editingRestaurant.force_rider_compensation || false,
+        delivery_fee: editingRestaurant.delivery_fee || 0,
+        show_rider_compensation: editingRestaurant.show_rider_compensation || false,
+        rider_compensation_amount: editingRestaurant.rider_compensation_amount || null
       }).eq('id', editingRestaurant.id);
       if (error) { showToast('Errore: ' + error.message, 'error'); }
       else {
@@ -567,7 +573,46 @@ export default function SuperAdminPanel() {
               <div className="bg-slate-700/30 rounded-lg p-3"><div className="flex items-center justify-between mb-2"><label className="text-sm text-slate-300">📞 Tel 2</label><label className="flex items-center gap-2 text-xs"><span className="text-slate-500">Visibile</span><input type="checkbox" checked={editingRestaurant.show_phone_manager2 || false} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, show_phone_manager2: e.target.checked })} className="w-5 h-5 rounded cursor-pointer" /></label></div><input type="text" value={editingRestaurant.phone_manager2_label || 'Vice'} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, phone_manager2_label: e.target.value })} className="w-full px-2 py-1 bg-slate-600 rounded text-white text-sm mb-1 border border-slate-500" /><input type="text" value={editingRestaurant.phone_manager2 || ''} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, phone_manager2: e.target.value })} className="w-full px-2 py-1 bg-slate-600 rounded text-white text-sm border border-slate-500" /></div>
               <div className="bg-slate-700/30 rounded-lg p-3"><div className="flex items-center justify-between mb-2"><label className="text-sm text-slate-300">☎️ Fisso</label><label className="flex items-center gap-2 text-xs"><span className="text-slate-500">Visibile</span><input type="checkbox" checked={editingRestaurant.show_phone_landline || false} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, show_phone_landline: e.target.checked })} className="w-5 h-5 rounded cursor-pointer" /></label></div><input type="text" value={editingRestaurant.phone_landline_label || 'Fisso'} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, phone_landline_label: e.target.value })} className="w-full px-2 py-1 bg-slate-600 rounded text-white text-sm mb-1 border border-slate-500" /><input type="text" value={editingRestaurant.phone_landline || ''} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, phone_landline: e.target.value })} className="w-full px-2 py-1 bg-slate-600 rounded text-white text-sm border border-slate-500" /></div>
               <div className="bg-slate-700/30 rounded-lg p-3"><div className="flex items-center justify-between mb-2"><label className="text-sm text-slate-300">🌐 Sito</label><label className="flex items-center gap-2 text-xs"><span className="text-slate-500">Visibile</span><input type="checkbox" checked={editingRestaurant.show_website || false} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, show_website: e.target.checked })} className="w-5 h-5 rounded cursor-pointer" /></label></div><input type="text" value={editingRestaurant.website || ''} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, website: e.target.value })} className="w-full px-2 py-1 bg-slate-600 rounded text-white text-sm border border-slate-500 mt-6" /></div>
-              <div className="bg-green-700/20 rounded-lg p-3 border border-green-500/30"><div className="flex items-center justify-between mb-2"><label className="text-sm text-green-300">💬 WeChat</label><label className="flex items-center gap-2 text-xs"><span className="text-slate-500">Visibile</span><input type="checkbox" checked={editingRestaurant.show_wechat || false} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, show_wechat: e.target.checked })} className="w-5 h-5 rounded cursor-pointer" /></label></div><input type="text" value={editingRestaurant.wechat_id || ''} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, wechat_id: e.target.value })} className="w-full px-2 py-1 bg-slate-600 rounded text-white text-sm border border-green-500/50 mt-6" /></div>
+<div className="bg-green-700/20 rounded-lg p-3 border border-green-500/30"><div className="flex items-center justify-between mb-2"><label className="text-sm text-green-300">💬 WeChat</label><label className="flex items-center gap-2 text-xs"><span className="text-slate-500">Visibile</span><input type="checkbox" checked={editingRestaurant.show_wechat || false} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, show_wechat: e.target.checked })} className="w-5 h-5 rounded cursor-pointer" /></label></div><input type="text" value={editingRestaurant.wechat_id || ''} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, wechat_id: e.target.value })} className="w-full px-2 py-1 bg-slate-600 rounded text-white text-sm border border-green-500/50 mt-6" /></div>
+            </div>
+            {/* SEZIONE CONSEGNA & COMPENSO RIDER - SUPER ADMIN */}
+            <div className="border-t border-slate-600 pt-4 mt-4">
+              <h4 className="text-lg font-semibold text-orange-400 mb-3">🚚 Controlli Consegna & Rider</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-slate-700/50 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm text-slate-300">🔓 Ristoratore può modificare Costo Consegna</label>
+                    <input type="checkbox" checked={editingRestaurant.allow_delivery_fee_edit || false} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, allow_delivery_fee_edit: e.target.checked })} className="w-5 h-5 rounded cursor-pointer" />
+                  </div>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm text-slate-300">🔓 Ristoratore può attivare Compenso Trasparente</label>
+                    <input type="checkbox" checked={editingRestaurant.allow_rider_compensation_display || false} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, allow_rider_compensation_display: e.target.checked })} className="w-5 h-5 rounded cursor-pointer" />
+                  </div>
+                </div>
+                <div className="bg-orange-700/20 rounded-lg p-3 border border-orange-500/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm text-orange-300">⚡ FORZA visibilità Compenso (override)</label>
+                    <input type="checkbox" checked={editingRestaurant.force_rider_compensation || false} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, force_rider_compensation: e.target.checked })} className="w-5 h-5 rounded cursor-pointer" />
+                  </div>
+                  <p className="text-xs text-slate-500">Se attivo, mostra sempre il compenso anche se il ristoratore ha disattivato</p>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-3">
+                  <label className="block text-sm text-slate-300 mb-2">💰 Costo Consegna Attuale (€)</label>
+                  <input type="number" step="0.50" min="0" value={editingRestaurant.delivery_fee || 0} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, delivery_fee: parseFloat(e.target.value) || 0 })} className="w-full px-2 py-1 bg-slate-600 rounded text-white text-sm border border-slate-500" />
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm text-slate-300">💚 Compenso Rider Trasparente</label>
+                    <input type="checkbox" checked={editingRestaurant.show_rider_compensation || false} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, show_rider_compensation: e.target.checked })} className="w-5 h-5 rounded cursor-pointer" />
+                  </div>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-3">
+                  <label className="block text-sm text-slate-300 mb-2">🏍️ Compenso Rider (€)</label>
+                  <input type="number" step="0.50" min="0" value={editingRestaurant.rider_compensation_amount || ''} onChange={(e) => setEditingRestaurant({ ...editingRestaurant, rider_compensation_amount: parseFloat(e.target.value) || null })} className="w-full px-2 py-1 bg-slate-600 rounded text-white text-sm border border-slate-500" placeholder="Es: 4.00" />
+                </div>
+              </div>
             </div>
             <div className="flex gap-3"><button onClick={() => { setShowEditModal(false); setEditingRestaurant(null); }} className="px-4 py-2 bg-slate-700 text-slate-300 rounded-xl hover:bg-slate-600 transition">❌ Annulla</button><button onClick={saveRestaurantEdit} className="px-6 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition font-semibold">💾 Salva</button></div>
           </div>
